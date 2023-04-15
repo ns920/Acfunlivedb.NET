@@ -1,5 +1,5 @@
 ﻿# Acfunlivedb.NET
-[https://github.com/orzogc/acfunlivedb](acfunlivedb) 的.NET实现
+[acfunlivedb](https://github.com/orzogc/acfunlivedb) 的.NET实现
 用于保存Acfun直播数据
 
 ## 配置
