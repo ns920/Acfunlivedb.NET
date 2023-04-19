@@ -9,16 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 using Acfunlivedb.NET.DAL.Entity;
+using Acfunlivedb.NET.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace Acfunlivedb.NET.Services
 {
     public class GetPlaybackServices
     {
         private Request _request { get; set; }
+        private AcfunlivedbDbContext _dbContext { get; set; }
 
-        public GetPlaybackServices(Request request)
+        public GetPlaybackServices(Request request, AcfunlivedbDbContext dbContext)
         {
             _request = request;
+            _dbContext = dbContext;
         }
 
         public async Task<List<string>> Get(string liveId)
@@ -49,6 +53,18 @@ namespace Acfunlivedb.NET.Services
                         }
                     }
                 }
+
+                //爱咔剪辑
+                string uid = _dbContext.Lives.Where(x => x.liveId == liveId).First().uid.ToString();
+                string aikaUrl = $"https://live.acfun.cn/rest/pc-direct/live/getLiveCutInfo?authorId={uid}&liveId={liveId}";
+
+                var responseAika = await _request.GetNoSignNoLogin(aikaUrl);
+                var resultAika = JsonConvert.DeserializeObject<JToken>(responseAika);
+                if (resultAika["liveCutStatus"].ToString() == "1" && resultAika["liveCutUrl"] != null)
+                {
+                    resultList.Add($"爱咔链接：{resultAika["liveCutUrl"]}");
+                }
+
                 return resultList;
             }
             catch (Exception)

@@ -36,7 +36,13 @@ namespace AcfunApi
 
         public async Task<string> GetNoSign(string url)
         {
-            Uri uri = new Uri($"{url}&userId={loginInformation.userId}&did={loginInformation._did}&{loginInformation.serviceTokenName}={loginInformation.serviceToken}");
+            string urlWithParams = $"{url}&userId={loginInformation.userId}&did={loginInformation._did}&{loginInformation.serviceTokenName}={loginInformation.serviceToken}";
+            return await GetNoSignNoLogin(urlWithParams);
+        }
+
+        public async Task<string> GetNoSignNoLogin(string url)
+        {
+            Uri uri = new Uri(url);
             using HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("cookie", $"_did={loginInformation._did};");
             var response = await httpClient.GetAsync(uri);
